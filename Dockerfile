@@ -1,15 +1,12 @@
-# Multi-stage Docker build for easy deployment on Render / Railway / Cloud
+# Multi-stage build for repository root
 FROM maven:3.9.6-eclipse-temurin-17 AS build
 WORKDIR /app
 
-# Copy source files
-COPY backend /app/backend
-COPY frontend /app/frontend
+# Copy backend source
+COPY backend/pom.xml ./backend/
+COPY backend/src ./backend/src
 
-# Bundle frontend static files into backend resources so the JAR is self-contained
-RUN cp -r /app/frontend/* /app/backend/src/main/resources/static/ 2>/dev/null || true
-
-# Build production JAR
+# Build JAR package
 WORKDIR /app/backend
 RUN mvn clean package -DskipTests
 
