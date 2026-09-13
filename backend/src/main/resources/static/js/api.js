@@ -2,7 +2,7 @@
  * Centralized API client wrapper for Clinic Website
  */
 
-const API_BASE = (window.location.protocol === 'http:' || window.location.protocol === 'https:') && window.location.port === '8080'
+const API_BASE = (window.location.protocol === 'http:' || window.location.protocol === 'https:')
   ? '/api'
   : 'http://localhost:8080/api';
 
