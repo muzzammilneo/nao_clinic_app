@@ -17,7 +17,7 @@ public class AdminServiceTest {
 
     @Test
     void testAdminAuth_Success() {
-        Admin admin = adminService.authenticate("admin", "admin123");
+        Admin admin = adminService.authenticate("admin", "Nao@Clinic#2025");
         assertNotNull(admin);
         assertEquals("admin", admin.getUsername());
     }

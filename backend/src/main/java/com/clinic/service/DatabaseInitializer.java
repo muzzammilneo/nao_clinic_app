@@ -35,10 +35,10 @@ public class DatabaseInitializer implements CommandLineRunner {
         // 1. Initialize default admin user if absent
         if (adminRepository.count() == 0) {
             String defaultUsername = "admin";
-            String defaultPassword = "admin123";
+            String defaultPassword = "Nao@Clinic#2025";
             String hashedPassword = passwordEncoder.encode(defaultPassword);
             adminRepository.save(new Admin(null, defaultUsername, hashedPassword));
-            log.info("Initialized default admin user: '{}' (password: '{}')", defaultUsername, defaultPassword);
+            log.info("Initialized default admin user: '{}'", defaultUsername);
         }
 
         // 2. Initialize default sample doctors if table is empty
