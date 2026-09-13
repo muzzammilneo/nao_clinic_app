@@ -1,0 +1,24 @@
+# Compiled class files
+target/
+backend/target/
+*.class
+*.jar
+*.war
+*.ear
+
+# H2 Database files
+*.mv.db
+*.trace.db
+backend/data/
+data/
+
+# OS & IDE files
+.DS_Store
+.idea/
+*.iml
+.vscode/
+
+# Node / Environment
+node_modules/
+dist/
+.env
