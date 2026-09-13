@@ -36,17 +36,16 @@ public class DatabaseInitializer implements CommandLineRunner {
         String envPassword = System.getenv("ADMIN_PASSWORD");
         String adminPassword = (envPassword != null && !envPassword.isBlank()) ? envPassword : "Nao@Clinic#2025";
 
-        // Create admin if not present
+        // Create admin if not present, otherwise always sync the password
         if (adminRepository.count() == 0) {
             String hashedPassword = passwordEncoder.encode(adminPassword);
             adminRepository.save(new Admin(null, "admin", hashedPassword));
             log.info("Initialized default admin user: 'admin'");
-        } else if (envPassword != null && !envPassword.isBlank()) {
-            // Env var is set — sync the password on every startup so Render env changes take effect
+        } else {
             adminRepository.findByUsername("admin").ifPresent(admin -> {
                 admin.setPasswordHash(passwordEncoder.encode(adminPassword));
                 adminRepository.update(admin);
-                log.info("Admin password synced from ADMIN_PASSWORD environment variable.");
+                log.info("Admin password synced on startup.");
             });
         }
 
