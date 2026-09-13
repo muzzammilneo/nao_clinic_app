@@ -36,18 +36,11 @@ public class DatabaseInitializer implements CommandLineRunner {
         String envPassword = System.getenv("ADMIN_PASSWORD");
         String adminPassword = (envPassword != null && !envPassword.isBlank()) ? envPassword : "Nao@Clinic#2025";
 
-        // Create admin if not present, otherwise always sync the password
-        if (adminRepository.count() == 0) {
-            String hashedPassword = passwordEncoder.encode(adminPassword);
-            adminRepository.save(new Admin(null, "admin", hashedPassword));
-            log.info("Initialized default admin user: 'admin'");
-        } else {
-            adminRepository.findByUsername("admin").ifPresent(admin -> {
-                admin.setPasswordHash(passwordEncoder.encode(adminPassword));
-                adminRepository.update(admin);
-                log.info("Admin password synced on startup.");
-            });
-        }
+        // Force-reset admin credentials on every startup using raw JDBC
+        String hashedPassword = passwordEncoder.encode(adminPassword);
+        jdbcTemplate.update("DELETE FROM admins WHERE username = ?", "admin");
+        jdbcTemplate.update("INSERT INTO admins (username, password_hash) VALUES (?, ?)", "admin", hashedPassword);
+        log.info("Admin user 'admin' credentials reset on startup.");
 
 
         // 2. Initialize default sample doctors if table is empty
