@@ -45,7 +45,7 @@ public class DatabaseInitializer implements CommandLineRunner {
             // Env var is set — sync the password on every startup so Render env changes take effect
             adminRepository.findByUsername("admin").ifPresent(admin -> {
                 admin.setPasswordHash(passwordEncoder.encode(adminPassword));
-                adminRepository.save(admin);
+                adminRepository.update(admin);
                 log.info("Admin password synced from ADMIN_PASSWORD environment variable.");
             });
         }

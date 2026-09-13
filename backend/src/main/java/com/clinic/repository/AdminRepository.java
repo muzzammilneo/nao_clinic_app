@@ -55,6 +55,11 @@ public class AdminRepository {
         return admin;
     }
 
+    public void update(Admin admin) {
+        String sql = "UPDATE admins SET password_hash = ? WHERE id = ?";
+        jdbcTemplate.update(sql, admin.getPasswordHash(), admin.getId());
+    }
+
     public long count() {
         Long count = jdbcTemplate.queryForObject("SELECT count(*) FROM admins", Long.class);
         return count != null ? count : 0;
