@@ -32,14 +32,24 @@ public class DatabaseInitializer implements CommandLineRunner {
 
     @Override
     public void run(String... args) {
-        // 1. Initialize default admin user if absent
+        // 1. Resolve admin password: env var takes priority over hardcoded default
+        String envPassword = System.getenv("ADMIN_PASSWORD");
+        String adminPassword = (envPassword != null && !envPassword.isBlank()) ? envPassword : "Nao@Clinic#2025";
+
+        // Create admin if not present
         if (adminRepository.count() == 0) {
-            String defaultUsername = "admin";
-            String defaultPassword = "Nao@Clinic#2025";
-            String hashedPassword = passwordEncoder.encode(defaultPassword);
-            adminRepository.save(new Admin(null, defaultUsername, hashedPassword));
-            log.info("Initialized default admin user: '{}'", defaultUsername);
+            String hashedPassword = passwordEncoder.encode(adminPassword);
+            adminRepository.save(new Admin(null, "admin", hashedPassword));
+            log.info("Initialized default admin user: 'admin'");
+        } else if (envPassword != null && !envPassword.isBlank()) {
+            // Env var is set — sync the password on every startup so Render env changes take effect
+            adminRepository.findByUsername("admin").ifPresent(admin -> {
+                admin.setPasswordHash(passwordEncoder.encode(adminPassword));
+                adminRepository.save(admin);
+                log.info("Admin password synced from ADMIN_PASSWORD environment variable.");
+            });
         }
+
 
         // 2. Initialize default sample doctors if table is empty
         if (doctorRepository.count() == 0) {
